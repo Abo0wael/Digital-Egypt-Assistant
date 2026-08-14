@@ -26,17 +26,33 @@ _ENV_VARS = {
 }
 
 
+def sync_streamlit_secrets():
+    """Sync Streamlit Secrets (st.secrets) to os.environ for deployment compatibility."""
+    try:
+        import streamlit as st
+        if hasattr(st, "secrets"):
+            for k, v in st.secrets.items():
+                if isinstance(v, str):
+                    clean_v = v.strip().replace("\n", "").replace("\r", "")
+                    if clean_v:
+                        os.environ[k] = clean_v
+    except Exception:
+        pass
+
+
 def _build_groq_llama_70b() -> ChatGroq:
-    return ChatGroq(model="llama-3.3-70b-versatile", temperature=0)
+    key = os.getenv("GROQ_API_KEY", "").strip()
+    return ChatGroq(model="llama-3.3-70b-versatile", api_key=key, temperature=0)
 
 
 def _build_groq_llama_8b() -> ChatGroq:
-    return ChatGroq(model="llama-3.1-8b-instant", temperature=0)
+    key = os.getenv("GROQ_API_KEY", "").strip()
+    return ChatGroq(model="llama-3.1-8b-instant", api_key=key, temperature=0)
 
 
 def _build_groq_gpt_oss() -> ChatGroq:
-    # openai/gpt-oss-120b: available free on Groq as replacement for DeepSeek R1
-    return ChatGroq(model="openai/gpt-oss-120b", temperature=0)
+    key = os.getenv("GROQ_API_KEY", "").strip()
+    return ChatGroq(model="openai/gpt-oss-120b", api_key=key, temperature=0)
 
 
 _BUILDERS = {
@@ -47,15 +63,14 @@ _BUILDERS = {
 
 
 def build_llm(model_choice: str):
-    """Build and smoke-test an LLM client for the chosen provider.
-
-    Raises a clear error if the provider's env var isn't set in .env, and
-    whatever the underlying client raises on a bad key; callers are expected
-    to catch it and surface a message to the user.
-    """
+    """Build and smoke-test an LLM client for the chosen provider."""
+    sync_streamlit_secrets()
     env_var = _ENV_VARS[model_choice]
-    if not os.getenv(env_var):
-        raise RuntimeError(f"{env_var} غير موجود في ملف .env")
+    key_val = os.getenv(env_var, "").strip().replace("\n", "").replace("\r", "")
+    if not key_val:
+        raise RuntimeError(f"{env_var} غير موجود في ملف .env أو في Streamlit Secrets")
 
+    os.environ[env_var] = key_val
     llm = _BUILDERS[model_choice]()
     return llm
+
