@@ -15,16 +15,27 @@ from langchain_core.runnables import RunnableLambda, RunnablePassthrough
 from langchain_core.runnables.history import RunnableWithMessageHistory
 
 
+try:
+    from langsmith import traceable
+except ImportError:
+    def traceable(*args, **kwargs):
+        def decorator(func):
+            return func
+        return decorator
+
+
 from core.prompts import build_rephrase_prompt
 
 
+@traceable(name="format_retrieved_documents")
 def _format_docs(docs: List[Document]) -> str:
     return "\n\n".join(doc.page_content for doc in docs)
 
 
 def build_conversational_chain(llm, retriever, prompt, memory) -> RunnableWithMessageHistory:
     rephrase_chain = (build_rephrase_prompt() | llm | StrOutputParser()).with_config(
-        run_name="rewrite_query"
+        run_name="rewrite_query",
+        tags=["rag-rephrase"]
     )
 
     def _get_search_query(x):
@@ -35,14 +46,14 @@ def build_conversational_chain(llm, retriever, prompt, memory) -> RunnableWithMe
 
     retrieve_context = (
         RunnableLambda(_get_search_query) | retriever | _format_docs
-    ).with_config(run_name="retrieve_context")
+    ).with_config(run_name="retrieve_context", tags=["rag-retrieval"])
 
     answer_chain = (
         RunnablePassthrough.assign(context=retrieve_context)
         | prompt
         | llm
         | StrOutputParser()
-    ).with_config(run_name="generate_answer")
+    ).with_config(run_name="generate_answer", tags=["digital-egypt-rag"])
 
     return RunnableWithMessageHistory(
         answer_chain,
@@ -50,4 +61,5 @@ def build_conversational_chain(llm, retriever, prompt, memory) -> RunnableWithMe
         input_messages_key="input",
         history_messages_key="chat_history",
     )
+
 

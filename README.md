@@ -23,6 +23,23 @@ An AI-powered **Arabic-language chatbot** that helps citizens navigate Egypt's d
 
 ---
 
+## 📊 RAG Model Evaluation / تقييم نموذج الـ RAG
+
+![RAG Model Evaluate](assets/Rag_model_evaluate.jpeg)
+
+Evaluation results using RAG Triad Metrics:
+- **Context Relevance (صلة السياق):** `5.00 / 5.0` (100%)
+- **Faithfulness (الدقة وعدم الهلوسة):** `5.00 / 5.0` (100%)
+- **Answer Relevance (ملائمة الإجابة):** `5.00 / 5.0` (100%)
+- **Overall Quality Score (التقييم الكلي للنظام):** `5.00 / 5.0` (100%)
+
+Run evaluations anytime using:
+```bash
+python evaluate_rag.py
+```
+
+---
+
 ## 🛠️ Tech Stack
 
 | Component | Technology |

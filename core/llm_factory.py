@@ -39,6 +39,20 @@ def sync_streamlit_secrets():
     except Exception:
         pass
 
+    # Ensure LangSmith / LangChain tracing variables are synced across environment keys
+    ls_key = os.getenv("LANGSMITH_API_KEY") or os.getenv("LANGCHAIN_API_KEY")
+    if ls_key:
+        clean_key = ls_key.strip().replace("\n", "").replace("\r", "")
+        os.environ["LANGSMITH_API_KEY"] = clean_key
+        os.environ["LANGCHAIN_API_KEY"] = clean_key
+        os.environ["LANGSMITH_TRACING"] = "true"
+        os.environ["LANGCHAIN_TRACING_V2"] = "true"
+
+    if not os.getenv("LANGSMITH_PROJECT") and not os.getenv("LANGCHAIN_PROJECT"):
+        os.environ["LANGSMITH_PROJECT"] = "digital-egypt-assistant"
+        os.environ["LANGCHAIN_PROJECT"] = "digital-egypt-assistant"
+
+
 
 def _build_groq_llama_70b() -> ChatGroq:
     key = os.getenv("GROQ_API_KEY", "").strip()
