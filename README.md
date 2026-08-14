@@ -1,8 +1,13 @@
 # Digital Egypt Assistant | المساعد الرقمي لخدمات مصر
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://digital-egypt-assistant-k4swnbph4rsfqkvtckrejt.streamlit.app/)
+
+🌐 **Live Demo:** [digital-egypt-assistant.streamlit.app](https://digital-egypt-assistant-k4swnbph4rsfqkvtckrejt.streamlit.app/)
+
 An AI-powered **Arabic-language chatbot** that helps citizens navigate Egypt's digital government services. Built with **Streamlit**, **LangChain**, and **RAG (Retrieval-Augmented Generation)** using a ChromaDB vector store and multilingual HuggingFace embeddings.
 
 > اسألني عن أي خدمة رقمية متاحة على بوابة مصر الرقمية
+
 
 ---
 
