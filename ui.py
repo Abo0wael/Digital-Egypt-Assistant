@@ -751,10 +751,25 @@ def render_answer(chain_with_history, session_id: str, user_input: str) -> None:
         # --- stream phase ---
         for chunk in stream_answer(chain_with_history, session_id, user_input):
             full_answer += chunk
-            placeholder.markdown(full_answer + "▌")
+            
+            # Hotfix: Qwen on Groq may stream utf-8 bytes incorrectly decoded as latin1.
+            # Good Arabic will raise UnicodeEncodeError and be ignored. Mojibake will be fixed.
+            display_text = full_answer
+            try:
+                display_text = full_answer.encode('latin1').decode('utf-8', errors='replace')
+            except Exception:
+                pass
+            
+            placeholder.markdown(display_text + "▌")
 
         # --- normalize phase ---
         placeholder.empty()  # clear the streaming placeholder
+
+        # Apply the hotfix permanently to the final answer
+        try:
+            full_answer = full_answer.encode('latin1').decode('utf-8')
+        except Exception:
+            pass
 
         service = normalize_response(full_answer)
         if service is not None:
