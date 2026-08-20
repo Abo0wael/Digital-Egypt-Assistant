@@ -19,13 +19,13 @@ from langsmith import tracing_context
 MODEL_CHOICES = [
     "Groq - GPT-OSS 120B",
     "Groq - GPT-OSS 20B",
-    "Groq - Qwen 3.6 27B",
+    "Groq - ALLaM 2 7B",
 ]
 
 _ENV_VARS = {
     "Groq - GPT-OSS 120B": "GROQ_API_KEY",
     "Groq - GPT-OSS 20B": "GROQ_API_KEY",
-    "Groq - Qwen 3.6 27B": "GROQ_API_KEY",
+    "Groq - ALLaM 2 7B": "GROQ_API_KEY",
 }
 
 
@@ -72,15 +72,15 @@ def _build_groq_gpt_oss() -> ChatGroq:
     return ChatGroq(model="openai/gpt-oss-120b", api_key=key, temperature=0)
 
 
-def _build_groq_qwen() -> ChatGroq:
+def _build_groq_allam() -> ChatGroq:
     key = os.getenv("GROQ_API_KEY", "").strip()
-    return ChatGroq(model="qwen/qwen3.6-27b", api_key=key, temperature=0)
+    return ChatGroq(model="allam-2-7b", api_key=key, temperature=0)
 
 
 _BUILDERS = {
     "Groq - GPT-OSS 120B": _build_groq_gpt_oss,
     "Groq - GPT-OSS 20B": _build_groq_gpt_oss_20b,
-    "Groq - Qwen 3.6 27B": _build_groq_qwen,
+    "Groq - ALLaM 2 7B": _build_groq_allam,
 }
 
 
