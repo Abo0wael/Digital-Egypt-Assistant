@@ -12,17 +12,20 @@ import os
 from langchain_groq import ChatGroq
 from langsmith import tracing_context
 
-# Only free fast models are included — no paid API keys required
+# Groq retired the two Llama models previously listed here on 2026-08-16.
+# Keep this list aligned with Groq's production model IDs: an unavailable
+# model is accepted by ChatGroq at construction time but fails with a 404 only
+# when the first response (or query rewrite) is generated.
 MODEL_CHOICES = [
-    "Groq - LLaMA 3.3 70B",
-    "Groq - LLaMA 3.1 8B",
     "Groq - GPT-OSS 120B",
+    "Groq - GPT-OSS 20B",
+    "Groq - Qwen 3.6 27B",
 ]
 
 _ENV_VARS = {
-    "Groq - LLaMA 3.3 70B": "GROQ_API_KEY",
-    "Groq - LLaMA 3.1 8B": "GROQ_API_KEY",
     "Groq - GPT-OSS 120B": "GROQ_API_KEY",
+    "Groq - GPT-OSS 20B": "GROQ_API_KEY",
+    "Groq - Qwen 3.6 27B": "GROQ_API_KEY",
 }
 
 
@@ -47,6 +50,11 @@ def sync_streamlit_secrets():
         os.environ["LANGCHAIN_API_KEY"] = clean_key
         os.environ["LANGSMITH_TRACING"] = "true"
         os.environ["LANGCHAIN_TRACING_V2"] = "true"
+    else:
+        # A tracing flag without a key causes a failed LangSmith request for
+        # every LLM call. Keep tracing optional for local and Cloud deploys.
+        os.environ["LANGSMITH_TRACING"] = "false"
+        os.environ["LANGCHAIN_TRACING_V2"] = "false"
 
     if not os.getenv("LANGSMITH_PROJECT") and not os.getenv("LANGCHAIN_PROJECT"):
         os.environ["LANGSMITH_PROJECT"] = "digital-egypt-assistant"
@@ -54,14 +62,9 @@ def sync_streamlit_secrets():
 
 
 
-def _build_groq_llama_70b() -> ChatGroq:
+def _build_groq_gpt_oss_20b() -> ChatGroq:
     key = os.getenv("GROQ_API_KEY", "").strip()
-    return ChatGroq(model="llama-3.3-70b-versatile", api_key=key, temperature=0)
-
-
-def _build_groq_llama_8b() -> ChatGroq:
-    key = os.getenv("GROQ_API_KEY", "").strip()
-    return ChatGroq(model="llama-3.1-8b-instant", api_key=key, temperature=0)
+    return ChatGroq(model="openai/gpt-oss-20b", api_key=key, temperature=0)
 
 
 def _build_groq_gpt_oss() -> ChatGroq:
@@ -69,10 +72,15 @@ def _build_groq_gpt_oss() -> ChatGroq:
     return ChatGroq(model="openai/gpt-oss-120b", api_key=key, temperature=0)
 
 
+def _build_groq_qwen() -> ChatGroq:
+    key = os.getenv("GROQ_API_KEY", "").strip()
+    return ChatGroq(model="qwen/qwen3.6-27b", api_key=key, temperature=0)
+
+
 _BUILDERS = {
-    "Groq - LLaMA 3.3 70B": _build_groq_llama_70b,
-    "Groq - LLaMA 3.1 8B": _build_groq_llama_8b,
     "Groq - GPT-OSS 120B": _build_groq_gpt_oss,
+    "Groq - GPT-OSS 20B": _build_groq_gpt_oss_20b,
+    "Groq - Qwen 3.6 27B": _build_groq_qwen,
 }
 
 

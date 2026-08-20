@@ -14,7 +14,7 @@ An AI-powered **Arabic-language chatbot** that helps citizens navigate Egypt's d
 
 - **Arabic-first & RTL Layout** — Native Right-to-Left Arabic UI with Egyptian identity styling and custom CSS layout.
 - **RAG Architecture** — Retrieves relevant government service information from a local ChromaDB vector store before generating structured responses.
-- **Groq LLMs Integration** — Ultra-fast response generation using Groq models (`LLaMA 3.3 70B`, `LLaMA 3.1 8B`, `GPT-OSS 120B`).
+- **Groq LLMs Integration** — Ultra-fast response generation using active Groq models (`GPT-OSS 120B`, `GPT-OSS 20B`, `Qwen 3.6 27B`).
 - **Structured Service Cards** — Automatically extracts and formats service details (description, requirements, steps, documents, support) into clean HTML cards.
 - **Session-aware Memory** — Conversation history is maintained across turns using `StreamlitChatMessageHistory`.
 - **Conversation Summarization** — One-click sidebar button condenses the chat history into a short Arabic summary.
@@ -46,7 +46,7 @@ python evaluate_rag.py
 |---|---|
 | Frontend / UI | [Streamlit](https://streamlit.io/) |
 | LLM Provider | [Groq](https://groq.com/) (`langchain-groq`) |
-| Supported Models | LLaMA 3.3 70B · LLaMA 3.1 8B · GPT-OSS 120B |
+| Supported Models | GPT-OSS 120B · GPT-OSS 20B · Qwen 3.6 27B |
 | LLM Framework | [LangChain](https://www.langchain.com/) |
 | Vector Store | [ChromaDB](https://www.trychroma.com/) |
 | Embeddings | `intfloat/multilingual-e5-large` (HuggingFace) |

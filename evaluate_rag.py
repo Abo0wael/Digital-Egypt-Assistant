@@ -40,8 +40,8 @@ def run_evaluation():
     )
     retriever = vector_store.as_retriever(search_kwargs={"k": 5})
 
-    print("2️⃣ تهيئة نموذج اللغات (Groq Llama 3.1 8B)...")
-    llm = build_llm("Groq - LLaMA 3.1 8B")
+    print("2️⃣ تهيئة نموذج اللغات (Groq GPT-OSS 20B)...")
+    llm = build_llm("Groq - GPT-OSS 20B")
     prompt = build_prompt()
 
     # 2. Comprehensive Test Benchmark Dataset
